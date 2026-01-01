@@ -1,0 +1,52 @@
+.time-section {
+  margin-top: 24px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-family: "GmarketBold";
+  margin-bottom: 16px;
+}
+
+/* 버튼 그리드 */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* 버튼 */
+.time-button {
+  position: relative;
+  padding: 14px 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+
+/* 선택됨 */
+.time-button.selected {
+  border: 2px solid #facc15;
+  background-color: #fffbea;
+}
+
+/* 시간 텍스트 */
+.time-text {
+  font-family: "GmarketMedium";
+}
+
+/* 상태 뱃지 */
+.time-badge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background-color: #fde68a;
+  color: #92400e;
+  font-family: "GmarketMedium";
+}

@@ -1,0 +1,29 @@
+/* =====modal.css 모달 공통 ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-end; /* 모바일 bottom sheet 느낌 */
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}

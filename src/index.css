@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "GmarketLight";
+  src: url("/GmarketSansTTFLight.ttf") format("truetype");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "GmarketMedium";
+  src: url("/GmarketSansTTFMedium.ttf") format("truetype");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "GmarketBold";
+  src: url("/GmarketSansTTFBold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+/* 전역 기본 폰트 설정 */
+body {
+  font-family: "GmarketMedium", sans-serif;
+}

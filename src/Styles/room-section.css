@@ -1,0 +1,47 @@
+/*room-section.css 회의실 선택 영역*/
+.room-wrapper {
+  margin-top: 32px;
+}
+
+.room-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.room-card {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  font-size: 15px;
+  font-family: "GmarketMedium";
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+
+.room-card.selected {
+  border: 2px solid #facc15;
+  background-color: #fffbea;
+}
+
+.room-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #facc15;
+  color: #92400e;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
