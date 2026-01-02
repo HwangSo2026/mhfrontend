@@ -1,0 +1,59 @@
+.dd-wrap {
+  position: relative;
+  margin: 18px auto 6px;
+  width: min(520px, 92%);
+}
+
+.dd-btn {
+  width: 100%;
+  height: 56px;
+  border-radius: 14px;
+  border: 2px solid #d7d7d7;
+  padding: 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  background: #fff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dd-btn:focus {
+  outline: none;
+  border-color: #facc15;
+  box-shadow: 0 0 0 4px rgba(49, 130, 246, 0.15);
+}
+
+.dd-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.dd-item {
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.dd-item:hover {
+  background: #fffbea;
+}
+
+.dd-item.is-active {
+  color: #facc15;
+  font-weight: 700;
+  background: #fffbea;
+}
