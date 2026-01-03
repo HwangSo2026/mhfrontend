@@ -1,132 +1,117 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
 import "../styles/check-modal.css";
 
-const CheckModal = ({ onClose }) => {
-  const [step, setStep] = useState("SEARCH");
-
-  /* ===== 조회 입력 상태 ===== */
+const CheckModal = ({ onClose, onSubmit }) => {
+  const [name, setName] = useState("");
   const [pin, setPin] = useState(["", "", "", ""]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const inputsRef = useRef([]);
 
-  /* ===== 조회 결과 상태 (중요) ===== */
-  const [resultTimes, setResultTimes] = useState([]);
-  const [resultRoomsByTime, setResultRoomsByTime] = useState({});
+  useEffect(() => {
+    setName("");
+    setPin(["", "", "", ""]);
+    setActiveIndex(0);
+    setTimeout(() => inputsRef.current?.[0]?.focus(), 0);
+  }, []);
 
-  /* ===== 수정용 상태 ===== */
-  const [count, setCount] = useState(4);
-  const [classType, setClassType] = useState(null);
+  const handlePinKeyDown = (idx, e) => {
+    if (e.key !== "Backspace") return;
+    e.preventDefault();
 
-  const classes = ["임베디드", "클라우드", "웹/앱", "스마트팩토리", "IT/보안"];
+    const next = [...pin];
 
-  /* ===== 임시 조회 로직 (백엔드 붙이면 여기 교체) ===== */
-  const handleSearch = () => {
-    // 나중에 API 응답으로 대체될 부분
-    const times = ["11:00-13:00", "14:00-16:00"];
-    const roomsByTime = {
-      "11:00-13:00": "회의실 2",
-      "14:00-16:00": "회의실 3",
-    };
+    // 현재 칸에 값이 있으면 현재만 지우고 이전으로 이동
+    if (next[idx]) {
+      next[idx] = "";
+      setPin(next);
 
-    setResultTimes(times);
-    setResultRoomsByTime(roomsByTime);
-    setStep("RESULT");
+      const prev = Math.max(idx - 1, 0);
+      setActiveIndex(prev);
+      inputsRef.current[prev]?.focus();
+      return;
+    }
+
+    // 현재 칸이 비어있으면 이전 칸 지우고 이동
+    if (idx === 0) return;
+    const prev = idx - 1;
+    next[prev] = "";
+    setPin(next);
+
+    setActiveIndex(prev);
+    inputsRef.current[prev]?.focus();
+  };
+
+  const handlePinChange = (idx, value) => {
+    const v = value.replace(/\D/g, "").slice(0, 1);
+    const next = [...pin];
+    next[idx] = v;
+    setPin(next);
+
+    if (v && idx < 3) {
+      setActiveIndex(idx + 1);
+      inputsRef.current[idx + 1]?.focus();
+    }
+  };
+
+  const canSubmit = name.trim().length > 0 && pin.every((x) => x !== "");
+
+  const handleSubmit = () => {
+    if (!canSubmit) return;
+    onSubmit?.({ name: name.trim(), password: pin.join("") });
   };
 
   return (
-    <Modal type="center" onClose={onClose}>
-      {/* ================= 조회 단계 ================= */}
-      {step === "SEARCH" && (
-        <>
-          <div className="check-header">
-            <h2 className="check-title">예약 내역 조회</h2>
-          </div>
-
-          <label className="check-label">예약자</label>
+    <Modal onClose={onClose}>
+      <div style={{marginTop:"16px"}}></div>
+      <div className="form-header">
+        <span className="form-title">예약 내역 조회</span>
+        <div style={{marginTop:"16px"}}></div>
+      </div>
+      
+      <label className="form-label">예약자</label>
+      <input
+          className="form-input yellow"
+          placeholder="예약자 명을 입력해 주세요."
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      {/* PIN */}
+      <label className="form-label" style={{marginTop:"32px"}}>예약 조회용 임시 비밀번호</label>
+      <div style={{marginTop:"8px"}}></div>
+      <div className="rlm-pinRow pin-row">
+        {pin.map((digit, idx) => (
           <input
-            className="check-input"
-            placeholder="예약자명을 입력해 주세요."
+            key={idx}
+            ref={(el) => (inputsRef.current[idx] = el)}
+            className="rlm-pinInput pin-input yellow"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={1}
+            autoComplete="one-time-code"
+            onFocus={() => setActiveIndex(idx)}
+            value={activeIndex === idx ? digit : digit ? "*" : ""}
+            onChange={(e) => handlePinChange(idx, e.target.value)}
+            onKeyDown={(e) => handlePinKeyDown(idx, e)}
           />
+        ))}
+      </div>
 
-          <label className="check-label">예약 조회용 임시 비밀번호</label>
-          <div className="pin-row">
-            {pin.map((v, i) => (
-              <input
-                key={i}
-                className="pin-input yellow"
-                maxLength={1}
-                value={v}
-                onChange={(e) => {
-                  const next = [...pin];
-                  next[i] = e.target.value;
-                  setPin(next);
-                }}
-              />
-            ))}
-          </div>
+      <div className="공백">
 
-          <p className="check-hint">임시 비밀번호 4자리를 입력해 주세요.</p>
+      </div>
 
-          <div className="check-divider" />
+      <button
+        className="rlm-submit check-submit"
+        disabled={!canSubmit}
+        onClick={handleSubmit}
+        type="button"
+      >
+        예약 조회
+      </button>
 
-          <button className="check-submit" onClick={handleSearch}>
-            예약 조회
-          </button>
-        </>
-      )}
+      <div style={{marginTop:"16px"}}></div>
 
-      {/* ================= 결과 단계 ================= */}
-      {step === "RESULT" && (
-        <>
-          <div className="check-header">
-            <h2 className="check-title">예약 내역 조회</h2>
-          </div>
-
-          {/* ===== 시간 + 회의실 요약 ===== */}
-          {resultTimes.map((time) => (
-            <div key={time} className="check-summary">
-              {time} · {resultRoomsByTime[time]}
-            </div>
-          ))}
-
-          {/* 예약자 */}
-          <label className="check-label">예약자</label>
-          <input className="check-input" />
-
-          {/* 해당 반 */}
-          <label className="check-label">해당 반</label>
-          <div className="class-group">
-            {classes.map((c) => (
-              <button
-                key={c}
-                className={`class-btn ${classType === c ? "selected" : ""}`}
-                onClick={() => setClassType(c)}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-
-          {/* 인원 수 */}
-          <div className="people-group">
-            <span className="row-label">인원 수</span>
-            <div className="counter">
-              <button onClick={() => setCount(Math.max(1, count - 1))}>
-                −
-              </button>
-              <span>{count}명</span>
-              <button onClick={() => setCount(count + 1)}>＋</button>
-            </div>
-          </div>
-
-          <div className="check-divider" />
-
-          {/* 하단 버튼 */}
-          <div className="check-action-row">
-            <button className="check-action yellow">예약 변경</button>
-            <button className="check-action red">예약 취소</button>
-          </div>
-        </>
-      )}
     </Modal>
   );
 };
