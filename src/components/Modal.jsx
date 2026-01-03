@@ -1,9 +1,12 @@
 import "../styles/modal.css";
 
-const Modal = ({ children, onClose }) => {
+const Modal = ({ children, onClose, type = "center" }) => {
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+    <div className={`modal-backdrop backdrop-${type}`} onClick={onClose}>
+      <div
+        className={`modal modal-${type}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <button className="modal-close" onClick={onClose}>
           ✕
         </button>

@@ -1,29 +1,64 @@
-/* =====modal.css 모달 공통 ===== */
+/* modal.css */
+/* 공통 backdrop */
 .modal-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: flex-end; /* 모바일 bottom sheet 느낌 */
-  justify-content: center;
   z-index: 1000;
 }
 
+/* 🔥 중앙 모달용 backdrop */
+.backdrop-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🔥 바텀 시트용 backdrop */
+.backdrop-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* 공통 모달 박스 */
 .modal {
+  background: #fff;
   width: 100%;
   max-width: 420px;
-  background: white;
-  border-radius: 20px 20px 0 0;
-  padding: 20px;
   position: relative;
 }
 
+/* 중앙 모달 */
+.modal-center {
+  border-radius: 20px;
+  padding: 20px;
+}
+
+/* 바텀 시트 */
+.modal-bottom {
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  animation: slideUp 0.25s ease-out;
+}
+
+/* 닫기 버튼 */
 .modal-close {
   position: absolute;
-  right: 16px;
-  top: 16px;
+  top: 14px;
+  right: 14px;
   background: none;
   border: none;
   font-size: 20px;
   cursor: pointer;
+}
+
+/* 애니메이션 */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
