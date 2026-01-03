@@ -1,22 +1,60 @@
 /*confirm-modal.css 예약 확인 전용*/
+/* ===== 예약 확인 바텀 시트 ===== */
+
+/* 헤더 */
+.confirm-header {
+  text-align: center;
+  /* padding-top: -50px; */
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+/* 하단 구분선 */
+.confirm-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  height: 1px;
+  background-color: #e5e7eb; /* 연한 회색 */
+}
+
+.confirm-title {
+  margin: 12px;
+  font-size: 18px;
+  font-family: "GmarketMedium";
+}
+
+/* 내용 영역 */
+.confirm-content {
+  margin-top: 12px;
+}
+
+/* 시간 / 회의실 박스 */
 .confirm-box {
   border: 2px solid #facc15;
   background-color: #fffbea;
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  /* 두개만 쓰면 상하 / 좌우 */
+  /* padding: top right bottom left; */
   text-align: center;
+  font-size: 14px;
   font-family: "GmarketMedium";
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
+/* 다음 단계 버튼 */
 .confirm-next {
   width: 100%;
-  margin-top: 16px;
-  padding: 14px;
+  margin-top: 14px;
+  padding: 12px; /* ⬅️ 살짝 컴팩트 */
   border-radius: 14px;
   background-color: #facc15;
   border: none;
   font-size: 15px;
-  font-family: "GmarketBold";
+  font-family: "GmarketMedium";
   cursor: pointer;
 }

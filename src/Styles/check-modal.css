@@ -1,0 +1,153 @@
+/* check-modal.css */
+/* ===== 헤더 ===== */
+.check-header {
+  text-align: center;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.check-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.check-title {
+  font-size: 18px;
+  font-family: "GmarketMedium";
+}
+
+/* ===== 라벨 ===== */
+.check-label {
+  font-size: 14px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ===== 예약자 입력 ===== */
+.check-input {
+  width: 100%;
+  max-width: 160px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid #facc15;
+  background: #fffbea;
+}
+
+/* ===== PIN ===== */
+.pin-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  justify-content: flex-start; /* 왼쪽 정렬 */
+}
+
+.pin-input {
+  width: 42px;
+  height: 42px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 16px;
+}
+
+.pin-input.yellow {
+  border: 2px solid #facc15;
+  background: #fffbea;
+}
+
+.check-hint {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 6px;
+  text-align: left; /* 안내 문구도 왼쪽 */
+}
+
+/* ===== 요약 박스 ===== */
+.check-summary {
+  border: 2px solid #facc15;
+  background: #fffbea;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 12px;
+  font-family: "GmarketMedium";
+  font-size: 14px;
+}
+
+/* ===== 구분선 ===== */
+.check-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 16px 0;
+}
+
+/* ===== 버튼 ===== */
+.check-submit {
+  width: 100%;
+  max-width: 104px;
+  margin: 0 auto;
+  padding: 14px;
+  border-radius: 14px;
+  background: #facc15;
+  border: none;
+  font-size: 14px;
+  font-family: "GmarketMedium";
+  cursor: pointer;
+  display: block;
+}
+
+/* 결과 버튼 */
+.check-action {
+  width: 100%;
+  max-width: 160px;
+  margin: 8px auto 0;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 14px;
+  font-family: "GmarketMedium";
+  cursor: pointer;
+  display: block;
+}
+
+.check-action.yellow {
+  background: #facc15;
+}
+
+.check-action.red {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* 결과 액션 버튼 영역 */
+.check-action-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.check-action {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 14px;
+  font-family: "GmarketMedium";
+  cursor: pointer;
+}
+
+.check-action.yellow {
+  background: #facc15;
+}
+
+.check-action.red {
+  background: #ef4444;
+  color: #fff;
+}
