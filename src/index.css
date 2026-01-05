@@ -19,4 +19,27 @@
 /* 전역 기본 폰트 설정 */
 body {
   font-family: "GmarketMedium", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* iOS 기본 파란 텍스트/하이라이트 제거 + 버튼 글씨색 통일 */
+button,
+a,
+[role="button"] {
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS 버튼 기본 appearance 제거 (파란색/그라데이션 같은 것 방지) */
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none; /* 필요하면 주석 처리 */
+}
+
+/* 모바일에서 클릭/탭 시 파랗게 “링크처럼” 보이는 현상 방지 */
+button:focus,
+button:active {
+  outline: none;
 }

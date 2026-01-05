@@ -1,21 +1,37 @@
 import "../styles/room-section.css";
 
-const RoomSection = ({ selectedRoom, onSelect }) => {
-  const rooms = ["회의실 1", "회의실 2", "회의실 3", "회의실 4", "회의실 5"];
-
+const RoomSection = ({
+  rooms,
+  selectedRoom,
+  onSelect,
+  heldMap = {},     // { "1": true, "2": false ... }
+  loading = false,
+}) => {
   return (
     <div className="room-list">
-      {rooms.map((room) => (
-        <button
-          key={room}
-          className={`room-card ${selectedRoom === room ? "selected" : ""}`}
-          onClick={() => onSelect(room)}
-        >
-          <span>{room}</span>
+      {rooms.map((label) => {
+        const roomNo = String(label).match(/\d+/)?.[0]; // "회의실 3" -> "3"
+        const held = !!heldMap[roomNo];
+        const selected = selectedRoom === label;
 
-          {selectedRoom === room && <span className="room-check">✓</span>}
-        </button>
-      ))}
+        // ✅ 선점중이면 비활성 (내가 이미 선택한 건 표시 위해 예외)
+        const disabled = loading || (held && !selected);
+
+        return (
+          <button
+            key={label}
+            className={`room-card ${selected ? "selected" : ""} ${disabled ? "disabled" : ""}`}
+            onClick={() => !disabled && onSelect(label)}
+            disabled={disabled}
+            type="button"
+          >
+            <span>{label}</span>
+
+            {held && !selected && <span className="room-badge">예약중</span>}
+            {selected && <span className="room-check">✓</span>}
+          </button>
+        );
+      })}
     </div>
   );
 };

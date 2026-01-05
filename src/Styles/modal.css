@@ -32,7 +32,8 @@
 /* 중앙 모달 */
 .modal-center {
   border-radius: 20px;
-  padding: 20px;
+  padding: 8px;
+  max-width: 388px;
 }
 
 /* 바텀 시트 */

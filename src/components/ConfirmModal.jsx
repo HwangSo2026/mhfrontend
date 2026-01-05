@@ -1,23 +1,22 @@
 import Modal from "./Modal";
 import "../styles/confirm-modal.css";
 
-const ConfirmModal = ({ times = [], room, onNext, onClose }) => {
+const ConfirmModal = ({ selections = [], onNext, onClose }) => {
   return (
     <Modal type="bottom" onClose={onClose}>
-      {/* 헤더 */}
       <div className="confirm-header">
         <h2 className="confirm-title">예약 확인</h2>
       </div>
 
-      {/* 선택된 시간들 */}
-      {times.map((t) => (
-        <div key={t} className="confirm-box">
-          {t}
+      {selections.map((s, idx) => (
+        <div key={`${s.time}-${idx}`} className="confirm-box">
+          <div style={{ fontWeight: 600 }}>
+            {selections.length === 2 ? `${idx + 1}번째 예약` : "예약"}
+          </div>
+          <div>{s.time}</div>
+          <div style={{ marginTop: 6 }}>{s.room}</div>
         </div>
       ))}
-
-      {/* 회의실 */}
-      <div className="confirm-box">{room}</div>
 
       <button className="confirm-next" onClick={onNext}>
         다음 단계

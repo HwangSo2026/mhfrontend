@@ -1,4 +1,5 @@
 const TimeSection = ({ selectedTimes, onChange }) => {
+  
   const times = [
     "08:00-09:00",
     "09:00-11:00",
@@ -11,17 +12,20 @@ const TimeSection = ({ selectedTimes, onChange }) => {
   ];
 
   const handleClick = (time) => {
-    // 이미 선택된 시간 → 취소
+    // 1) 토글 해제
     if (selectedTimes.includes(time)) {
       onChange(selectedTimes.filter((t) => t !== time));
       return;
     }
 
-    // 최대 2개 제한
-    if (selectedTimes.length >= 2) return;
+    // 2) 2개 미만이면 추가
+    if (selectedTimes.length < 2) {
+      onChange([...selectedTimes, time]);
+      return;
+    }
 
-    // 새 시간 추가
-    onChange([...selectedTimes, time]);
+    // 3) 이미 2개면 FIFO: 오래된 1개 제거 + 새거 추가
+    onChange([...selectedTimes.slice(1), time]);
   };
 
   return (
@@ -29,12 +33,12 @@ const TimeSection = ({ selectedTimes, onChange }) => {
       <div className="time-grid">
         {times.map((t) => {
           const selected = selectedTimes.includes(t);
-
           return (
             <button
               key={t}
               className={`time-button ${selected ? "selected" : ""}`}
               onClick={() => handleClick(t)}
+              type="button"
             >
               <span className="time-text">{t}</span>
               {selected && <span className="time-badge">선택</span>}

@@ -3,10 +3,27 @@
   margin-top: 32px;
 }
 
-.room-desc {
-  font-size: 14px;
-  color: #6b7280;
+.room-span{
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.room-div-span{
+  display: flex;
+  justify-content: center;
+  height: 48px;
+  font-size: 15px;
+  background-color: #fffbea;
+  border-radius: 10px;
+  border: 1px solid #ffe100;
   margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.room-desc {
+  display: flex;
+  align-items: center;
+  color: #ff9c07; 
 }
 
 .room-list {
