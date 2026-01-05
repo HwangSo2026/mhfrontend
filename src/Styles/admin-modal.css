@@ -10,8 +10,8 @@
 }
 
 .admin-modal {
-    max-width: 400px;
-    width: 80vw;
+    /* max-width: 400px; */
+    width: 360px;
     max-height: 90vh;
     background: #fff;
     border-radius: 22px;
@@ -154,7 +154,6 @@
 
 .admin-form {
     padding: 8px 18px 22px;
-    width: min(560px, 92%);
     margin: 0 auto;
 }
 

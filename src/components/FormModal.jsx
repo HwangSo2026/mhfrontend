@@ -75,20 +75,22 @@ const FormModal = ({ onSubmit, onClose }) => {
       />
 
       {/* 인원 수 */}
-      {/* <div className="form-row center">
-        <span className="row-label">인원 수</span>
-        <div className="counter">
-          <button onClick={() => setCount(Math.max(1, count - 1))}>−</button>
-          <span>{count}명</span>
-          <button onClick={() => setCount(count + 1)}>＋</button>
-        </div>
-      </div> */}
       <div className="people-group">
         <span className="row-label">인원 수</span>
         <div className="counter">
-          <button type="button" onClick={() => setCount(Math.max(1, count - 1))}>−</button>
+          <button
+            type="button"
+            onClick={() => setCount(Math.max(2, count - 1))}
+            disabled={count <= 2}
+          >
+            −
+          </button>
+
           <span>{count}명</span>
-          <button type="button" onClick={() => setCount(count + 1)}>＋</button>
+
+          <button type="button" onClick={() => setCount(count + 1)}>
+            ＋
+          </button>
         </div>
       </div>
 

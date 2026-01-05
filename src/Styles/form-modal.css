@@ -17,7 +17,13 @@
   margin: 14px 0 6px;
   display: block;
   margin-left: 16px;
+}
 
+.form-label2{
+  font-size: 16px;
+  margin: 14px 0 6px;
+  display: block;
+  margin-left: 48px;
 }
 
 /* 비번 문구 중앙 정렬 할 거면 다시 주석 해제하고 ㄱ */
@@ -29,7 +35,7 @@
 
 .form-input {
   width: 100%;
-  max-width: 160px;
+  max-width: 260px;
   margin: 0 auto;
   /* 중앙 정렬 */
   padding: 10px 12px;

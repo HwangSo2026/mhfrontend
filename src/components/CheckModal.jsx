@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
+import ReservationDetailModal from "./ReservationDetailModal"; // ✅ 추가
 import "../styles/check-modal.css";
 
-const CheckModal = ({ onClose, onSubmit }) => {
+const CheckModal = ({ onClose, onFound }) => {
   const [name, setName] = useState("");
   const [pin, setPin] = useState(["", "", "", ""]);
   const [activeIndex, setActiveIndex] = useState(0);
   const inputsRef = useRef([]);
+
+  // ✅ 조회 성공 시 보여줄 예약 데이터(임시)
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [reservation, setReservation] = useState(null);
 
   useEffect(() => {
     setName("");
@@ -21,7 +26,6 @@ const CheckModal = ({ onClose, onSubmit }) => {
 
     const next = [...pin];
 
-    // 현재 칸에 값이 있으면 현재만 지우고 이전으로 이동
     if (next[idx]) {
       next[idx] = "";
       setPin(next);
@@ -32,7 +36,6 @@ const CheckModal = ({ onClose, onSubmit }) => {
       return;
     }
 
-    // 현재 칸이 비어있으면 이전 칸 지우고 이동
     if (idx === 0) return;
     const prev = idx - 1;
     next[prev] = "";
@@ -58,27 +61,76 @@ const CheckModal = ({ onClose, onSubmit }) => {
 
   const handleSubmit = () => {
     if (!canSubmit) return;
-    onSubmit?.({ name: name.trim(), password: pin.join("") });
+
+    const payload = { name: name.trim(), password: pin.join("") };
+
+    // ✅ 지금은 백엔드 없으니까 더미 리스트로 테스트
+    const mockList = [
+      {
+        id: 1,
+        date: "2026-01-05",
+        time: "09:00-11:00",
+        slot: "part2",
+        room: "회의실 3",
+        name: payload.name,
+        count: 4,
+        classType: "웹/앱",
+        pin: payload.password,
+      },
+      {
+        id: 2,
+        date: "2026-01-05",
+        time: "14:00-16:00",
+        slot: "part5",
+        room: "회의실 2",
+        name: payload.name,
+        count: 3,
+        classType: "클라우드",
+        pin: payload.password,
+      },
+    ];
+
+    // ✅ 여기 한 줄이 Home으로 결과 넘기는 "호출"
+    onFound?.(mockList);
   };
+
+  // ✅ 조회 후에는 CheckModal 대신 상세 모달을 렌더링
+  if (detailOpen && reservation) {
+    return (
+      <ReservationDetailModal
+        reservation={reservation}
+        onClose={onClose} // 나가기 누르면 전체 닫기
+        onUpdate={(updated) => {
+          // ✅ 수정 완료 눌렀을 때: 지금은 프론트에서만 반영
+          console.log("updated:", updated);
+          setReservation(updated);   // 화면 갱신
+          // setDetailOpen(false);   // 수정 후 다시 조회 화면으로 보내고 싶으면 해제
+        }}
+      />
+    );
+  }
 
   return (
     <Modal onClose={onClose}>
-      <div style={{marginTop:"16px"}}></div>
+      <div style={{ marginTop: "16px" }} />
       <div className="form-header">
         <span className="form-title">예약 내역 조회</span>
-        <div style={{marginTop:"16px"}}></div>
+        <div style={{ marginTop: "16px" }} />
       </div>
-      
-      <label className="form-label">예약자</label>
+
+      <label className="form-label2">예약자</label>
       <input
-          className="form-input yellow"
-          placeholder="예약자 명을 입력해 주세요."
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      {/* PIN */}
-      <label className="form-label" style={{marginTop:"32px"}}>예약 조회용 임시 비밀번호</label>
-      <div style={{marginTop:"8px"}}></div>
+        className="check-yellow2"
+        placeholder="예약자 명을 입력해 주세요."
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+
+      <label className="form-label2" style={{ marginTop: "32px" }}>
+        예약 조회용 임시 비밀번호
+      </label>
+      <div style={{ marginTop: "8px" }} />
+
       <div className="rlm-pinRow pin-row">
         {pin.map((digit, idx) => (
           <input
@@ -97,9 +149,7 @@ const CheckModal = ({ onClose, onSubmit }) => {
         ))}
       </div>
 
-      <div className="공백">
-
-      </div>
+      <div className="공백" />
 
       <button
         className="rlm-submit check-submit"
@@ -110,8 +160,7 @@ const CheckModal = ({ onClose, onSubmit }) => {
         예약 조회
       </button>
 
-      <div style={{marginTop:"16px"}}></div>
-
+      <div style={{ marginTop: "16px" }} />
     </Modal>
   );
 };

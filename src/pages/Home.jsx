@@ -8,6 +8,8 @@ import FormModal from "../components/FormModal";
 import CheckModal from "../components/CheckModal";
 import AdminModal from "../components/AdminModal";
 import Modal from "../components/Modal";
+import ReservationListModal from "../components/ReservationListModal";
+import ReservationDetailModal from "../components/ReservationDetailModal";
 
 import "../styles/layout.css";
 import "../styles/time-section.css";
@@ -66,6 +68,9 @@ function roomToKey(roomLabel) {
 const Home = () => {
   const [step, setStep] = useState("TIME"); // TIME | ROOM
   const [modal, setModal] = useState(null); // null | CONFIRM | FORM | CHECK | ADMIN
+
+  const [historyList, setHistoryList] = useState([]);
+  const [detailReservation, setDetailReservation] = useState(null);
 
   // ✅ 핵심: time-room 매칭을 한 덩어리로 관리
   const [selections, setSelections] = useState([]); // [{ time: string, room: string|null }]
@@ -306,6 +311,28 @@ const Home = () => {
     };
   }, [step, roomPickIndex, currentSelection?.time]);
 
+  const handleReSelectFromDetail = (draft) => {
+    const t = draft?.time;
+    if (!t) return;
+
+    setSelections([{
+      time: t,
+      room: null,
+      date: null,
+      slot: null,
+      roomKey: null,
+      holdToken: null,
+      expiresInSeconds: null,
+    }]);
+
+    setStep("TIME");      // 시간대부터 다시
+    setRoomPickIndex(0);
+
+    // 모달 닫기
+    setModal(null);
+    setDetailReservation(null);
+  };
+
   return (
     <>
       {/* 헤더 */}
@@ -373,9 +400,13 @@ const Home = () => {
 
             <div className="room-div-span">
               <p className="room-desc">
-                {selections.length === 2
-                  ? `${roomPickIndex + 1}번째 회의실을 선택해주세요. (${currentSelection?.time})`
-                  : `예약할 회의실을 선택해주세요. (${currentSelection?.time})`}
+                {selections.length === 2 ? (
+                  <>
+                    <span className="room-pick-highlight">{roomPickIndex + 1}번째</span> 회의실을 선택해주세요. ({currentSelection?.time})
+                  </>
+                ) : (
+                  <>예약할 회의실을 선택해주세요. ({currentSelection?.time})</>
+                )}
               </p>
             </div>
 
@@ -410,7 +441,54 @@ const Home = () => {
         {modal === "CHECK" && (
           <CheckModal
             onClose={() => setModal(null)}
-            selections={selections}      // ✅ 변경
+            onFound={(list) => {
+              if (!Array.isArray(list) || list.length === 0) {
+                alert("예약 내역이 없습니다.");
+                return;
+              }
+              if (list.length === 1) {
+                setDetailReservation(list[0]);
+                setModal("DETAIL");
+                return;
+              }
+              setHistoryList(list);
+              setModal("HISTORY");
+            }}
+          />
+        )}
+
+        {modal === "HISTORY" && (
+          <ReservationListModal
+            reservations={historyList}
+            onClose={() => {
+              setModal(null);
+              setHistoryList([]);
+            }}
+            onPick={(r) => {
+              setDetailReservation(r);
+              setModal("DETAIL");
+            }}
+          />
+        )}
+
+        {modal === "DETAIL" && detailReservation && (
+          <ReservationDetailModal
+            reservation={detailReservation}
+            onClose={() => {
+              setModal(null);
+              setDetailReservation(null);
+            }}
+            onUpdate={(payload) => {
+              setDetailReservation(payload);
+              setHistoryList((prev) => prev.map((x) => (x.id === payload.id ? payload : x)));
+              console.log("저장 payload:", payload);
+            }}
+            onCancel={(payload) => {
+              setHistoryList((prev) => prev.filter((x) => x.id !== payload.id));
+              console.log("취소 payload:", payload);
+              // 여기서 서버 delete 붙이면 됨
+            }}
+            onReSelect={handleReSelectFromDetail}
           />
         )}
 

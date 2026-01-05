@@ -157,3 +157,15 @@
   margin-top: 32px;
   
 }
+
+
+.check-yellow2 {
+  width: 200px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid #facc15;
+  background: #fffbea;
+  margin-left: 45px;
+  border: 2px solid #facc15;
+  background: #fffbea;
+}
