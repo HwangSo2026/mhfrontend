@@ -172,10 +172,11 @@ const AdminModal = ({ open, onClose, onForceCancel }) => {
               <input className="admin-input" value={course} readOnly />
             </div>
 
-            <div className="admin-row">
+            {/* 기수 주석 */}
+            {/* <div className="admin-row">
               <div className="admin-label">기수</div>
               <input className="admin-input" value={`${gen}기`} readOnly />
-            </div>
+            </div> */}
 
             <div className="admin-row">
               <div className="admin-label">인원 수</div>

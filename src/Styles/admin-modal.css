@@ -12,12 +12,13 @@
 .admin-modal {
     /* max-width: 400px; */
     width: 360px;
-    max-height: 90vh;
+    max-height: 80vh;
     background: #fff;
     border-radius: 22px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    margin-top: 5vh;
 }
 
 .admin-body {
@@ -102,7 +103,7 @@
 
 .admin-slot {
     width: min(240px, 100%);
-    height: 56px;
+    height: 40px;
     border-radius: 16px;
     border: 2px solid #d7d7d7;
     background: #fff;
@@ -171,7 +172,7 @@
 
 .admin-input {
     width: 90px;
-    height: 42px;
+    height: 24px;
     border-radius: 12px;
     border: 2px solid #facc15;
     padding: 0 14px;

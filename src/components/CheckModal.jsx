@@ -17,7 +17,7 @@ const CheckModal = ({ onClose, onFound }) => {
     setName("");
     setPin(["", "", "", ""]);
     setActiveIndex(0);
-    setTimeout(() => inputsRef.current?.[0]?.focus(), 0);
+    // setTimeout(() => inputsRef.current?.[0]?.focus(), 0); 포커싱 삭제
   }, []);
 
   const handlePinKeyDown = (idx, e) => {

@@ -210,7 +210,8 @@ const ReservationDetailModal = ({ reservation, onClose, onUpdate, onCancel }) =>
                 ))}
             </div>
 
-            <label className="form-label">예약 조회용 임시 비밀번호</label>
+            {/* 임시비밀번호 불필요 판단 */}
+            {/* <label className="form-label">예약 조회용 임시 비밀번호</label>
             <div className="pin-row" onPaste={handlePinPaste}>
                 {pin.map((v, i) => (
                     <input
@@ -230,7 +231,7 @@ const ReservationDetailModal = ({ reservation, onClose, onUpdate, onCancel }) =>
                         disabled={isSaving}
                     />
                 ))}
-            </div>
+            </div> */}
 
             <div className="form-divider" />
 

@@ -170,6 +170,7 @@
 }
 
 .meta-chip {
+    height: 8px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -187,6 +188,7 @@
 
 .meta-chip2 {
     width: 100%;
+    height: 8px;
     display: flex;
     justify-content: center;
     align-items: center;

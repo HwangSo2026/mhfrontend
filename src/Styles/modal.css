@@ -31,9 +31,11 @@
 
 /* 중앙 모달 */
 .modal-center {
+  margin-top: 10vh;
   border-radius: 20px;
   padding: 8px;
   max-width: 320px;
+  max-height: 80vh;
 }
 
 /* 바텀 시트 */
