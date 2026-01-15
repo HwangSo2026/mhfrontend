@@ -14,6 +14,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
+import ReservationDetailModal from "./ReservationDetailModal"; // ✅ 추가
 import "../styles/check-modal.css";
 import { searchReservation } from "../api/reservationApi";
 

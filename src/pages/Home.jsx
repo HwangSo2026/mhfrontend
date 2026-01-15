@@ -16,6 +16,8 @@ import FormModal from "../components/FormModal";
 import CheckModal from "../components/CheckModal";
 import AdminModal from "../components/AdminModal";
 import Modal from "../components/Modal";
+import ReservationListModal from "../components/ReservationListModal";
+import ReservationDetailModal from "../components/ReservationDetailModal";
 
 import "../styles/layout.css";
 import "../styles/time-section.css";
@@ -416,6 +418,30 @@ const Home = () => {
       cancelled = true;
     };
   }, [step, roomPickIndex, currentSelection?.time]);
+
+  const handleReSelectFromDetail = (draft) => {
+    const t = draft?.time;
+    if (!t) return;
+
+    setSelections([
+      {
+        time: t,
+        room: null,
+        date: null,
+        slot: null,
+        roomKey: null,
+        holdToken: null,
+        expiresInSeconds: null,
+      },
+    ]);
+
+    setStep("TIME"); // 시간대부터 다시
+    setRoomPickIndex(0);
+
+    // 모달 닫기
+    setModal(null);
+    setDetailReservation(null);
+  };
 
   return (
     <>
