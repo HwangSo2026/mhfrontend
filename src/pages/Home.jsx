@@ -1,5 +1,13 @@
-import { acquireHold, refreshHold, getRoomsStatus, releaseHold } from "../api/holdApi";
+import {
+  acquireHold,
+  refreshHold,
+  getRoomsStatus,
+  releaseHold,
+} from "../api/holdApi";
 import { useState, useRef, useMemo, useEffect } from "react";
+import { createReservation } from "../api/reservationApi";
+// import { searchReservation } from "../api/reservationApi";
+import { updateReservation, deleteReservation } from "../api/reservationApi";
 
 import TimeSection from "../components/TimeSection";
 import RoomSection from "../components/RoomSection";
@@ -22,7 +30,15 @@ function getTodayKST() {
   }).format(new Date()); // "2026-01-03" 형태
 }
 
-const ROOMS = ["회의실 1", "회의실 2", "회의실 3", "회의실 4", "회의실 5", "회의실 6", "회의실 7"];
+const ROOMS = [
+  "회의실 1",
+  "회의실 2",
+  "회의실 3",
+  "회의실 4",
+  "회의실 5",
+  "회의실 6",
+  "회의실 7",
+];
 
 // ✅ time string -> part 키 (백엔드와 반드시 동일해야 함)
 const TIME_TO_SLOT = {
@@ -48,7 +64,9 @@ const TIME_ORDER = [
 ];
 
 const sortSelectionsByTime = (arr) =>
-  [...arr].sort((a, b) => TIME_ORDER.indexOf(a.time) - TIME_ORDER.indexOf(b.time));
+  [...arr].sort(
+    (a, b) => TIME_ORDER.indexOf(a.time) - TIME_ORDER.indexOf(b.time)
+  );
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -67,6 +85,10 @@ const Home = () => {
   const [step, setStep] = useState("TIME"); // TIME | ROOM
   const [modal, setModal] = useState(null); // null | CONFIRM | FORM | CHECK | ADMIN
 
+  // null이면 "예약 확정"
+  // 값이 있으면 "예약 수정"
+  const [editingTarget, setEditingTarget] = useState(null);
+
   // ✅ 핵심: time-room 매칭을 한 덩어리로 관리
   const [selections, setSelections] = useState([]); // [{ time: string, room: string|null }]
   const [roomPickIndex, setRoomPickIndex] = useState(0);
@@ -74,7 +96,10 @@ const Home = () => {
   const roomRef = useRef(null);
 
   // TimeSection이 아직 times 배열을 쓰니까, selections에서 파생
-  const selectedTimes = useMemo(() => selections.map((s) => s.time), [selections]);
+  const selectedTimes = useMemo(
+    () => selections.map((s) => s.time),
+    [selections]
+  );
 
   const [heldMap, setHeldMap] = useState({}); // { "1": true/false ... }
   const [roomStatusLoading, setRoomStatusLoading] = useState(false);
@@ -196,21 +221,26 @@ const Home = () => {
       setSelections(
         nextSelections.map((s, i) => ({
           ...s,
-          holdToken: results[i].holdToken,              // ✅ 응답 필드명
-          expiresInSeconds: results[i].expiresInSeconds // ✅ 응답 필드명
+          holdToken: results[i].holdToken, // ✅ 응답 필드명
+          expiresInSeconds: results[i].expiresInSeconds, // ✅ 응답 필드명
         }))
       );
 
+      // hold 성공 후 → 바로 예약 정보 입력
       setModal("CONFIRM");
     } catch (e) {
       console.error(e);
 
       // e.message가 JSON 문자열로 들어오는 구조라면
       let payload = null;
-      try { payload = JSON.parse(e.message); } catch { }
+      try {
+        payload = JSON.parse(e.message);
+      } catch {}
 
       if (payload?.code === "HOLD_CONFLICT") {
-        alert("이미 다른 사용자가 선점 중인 회의실이에요. 다른 회의실을 선택해주세요.");
+        alert(
+          "이미 다른 사용자가 선점 중인 회의실이에요. 다른 회의실을 선택해주세요."
+        );
 
         // ✅ 서버 상태 다시 받아와서 버튼 즉시 비활성화
         const date = getTodayKST();
@@ -221,7 +251,7 @@ const Home = () => {
             const map = {};
             for (const r of data.rooms ?? []) map[r.room] = !!r.held;
             setHeldMap(map);
-          } catch { }
+          } catch {}
         }
 
         // ✅ ROOM 화면 유지해서 다시 고르게
@@ -236,9 +266,9 @@ const Home = () => {
 
   const cancelAndReset = async () => {
     try {
-      const targets = selections.filter(s => s.holdToken);
+      const targets = selections.filter((s) => s.holdToken);
       await Promise.all(
-        targets.map(s =>
+        targets.map((s) =>
           releaseHold({
             date: s.date,
             slot: s.slot,
@@ -258,8 +288,89 @@ const Home = () => {
     }
   };
 
-  const handleComplete = () => {
-    setModal("DONE"); // ✅ alert 대신 완료 모달
+  const handleComplete = async (formData) => {
+    //  프론트 1차 검증 (400 방지용)
+    if (!formData.name?.trim()) {
+      alert("예약자 이름을 입력해주세요.");
+      return;
+    }
+    if (!formData.course) {
+      alert("해당 반을 선택해주세요.");
+      return;
+    }
+    if (!/^\d{4}$/.test(formData.password)) {
+      alert("비밀번호는 4자리 숫자여야 합니다.");
+      return;
+    }
+
+    try {
+      // selections = 최대 2개
+      await Promise.all(
+        selections.map((s) =>
+          createReservation({
+            date: s.date,
+            slot: s.slot,
+            room: s.roomKey, //  "1"~"7" 문자열
+            holdToken: s.holdToken,
+            name: formData.name.trim(),
+            course: formData.course,
+            headcount: formData.headcount,
+            password: formData.password,
+          })
+        )
+      );
+
+      setModal("DONE");
+    } catch (e) {
+      console.error(e);
+
+      let payload;
+      try {
+        payload = JSON.parse(e.message);
+      } catch {}
+
+      // 이 분기 로직은 반드시 유지하는 게 맞음
+      if (payload?.code === "HOLD_NOT_FOUND") {
+        alert("선점이 만료되었어요. 다시 선택해주세요.");
+      } else if (payload?.code === "RESERVATION_CONFLICT") {
+        alert("이미 예약된 회의실이에요.");
+      } else {
+        alert("예약에 실패했어요.");
+      }
+
+      cancelAndReset();
+    }
+  };
+
+  const handleUpdate = async (target, newData) => {
+    try {
+      await updateReservation({
+        date: target.date,
+        slot: target.slot,
+        room: target.roomKey,
+        payload: {
+          password: target.password,
+          name: newData.name,
+          course: newData.course,
+          headcount: newData.headcount,
+        },
+      });
+
+      alert("예약이 수정되었어요.");
+      setModal(null);
+    } catch (e) {
+      alert("비밀번호가 일치하지 않아요.");
+    }
+  };
+
+  //Home은 api 호출만 담당, 체크모달에서 취소 UX 담당
+  const handleDelete = async (target) => {
+    await deleteReservation({
+      date: target.date,
+      slot: target.slot,
+      room: target.roomKey,
+      password: target.password,
+    });
   };
 
   const resetAll = () => {
@@ -311,14 +422,20 @@ const Home = () => {
       {/* 헤더 */}
       <header className="header">
         <div className="header-inner">
-          <img src="/rapa-logo.png" alt="DX 캠퍼스 로고" className="header-logo" />
+          <img
+            src="/rapa-logo.png"
+            alt="DX 캠퍼스 로고"
+            className="header-logo"
+          />
 
           <button className="history-btn" onClick={() => setModal("CHECK")}>
             예약 내역
           </button>
 
           {/* 임시 관리자 버튼 */}
-          <button className="admin-btn" onClick={() => setModal("ADMIN")}>(임시) 관리자</button>
+          <button className="admin-btn" onClick={() => setModal("ADMIN")}>
+            (임시) 관리자
+          </button>
           {modal === "ADMIN" && (
             <AdminModal
               open={true}
@@ -333,7 +450,6 @@ const Home = () => {
       </header>
 
       <div className="container">
-
         {/* 상단 안내 */}
         <section className="intro-section">
           <p className="intro-title">
@@ -344,13 +460,18 @@ const Home = () => {
 
           <div className="notice-box">
             <span>· 최대 2타임 ·</span>
-            <span className="notice-box-span2">10시 전 프로젝트 진행 과정 우선</span>
+            <span className="notice-box-span2">
+              10시 전 프로젝트 진행 과정 우선
+            </span>
             <span className="notice-icon">ⓘ</span>
           </div>
         </section>
 
         {/* 시간 선택 */}
-        <TimeSection selectedTimes={selectedTimes} onChange={handleTimeChange} />
+        <TimeSection
+          selectedTimes={selectedTimes}
+          onChange={handleTimeChange}
+        />
 
         {/* 다음 단계 버튼 */}
         <button
@@ -374,11 +495,12 @@ const Home = () => {
             <div className="room-div-span">
               <p className="room-desc">
                 {selections.length === 2
-                  ? `${roomPickIndex + 1}번째 회의실을 선택해주세요. (${currentSelection?.time})`
+                  ? `${roomPickIndex + 1}번째 회의실을 선택해주세요. (${
+                      currentSelection?.time
+                    })`
                   : `예약할 회의실을 선택해주세요. (${currentSelection?.time})`}
               </p>
             </div>
-
 
             <RoomSection
               rooms={ROOMS}
@@ -394,24 +516,32 @@ const Home = () => {
         {modal === "CONFIRM" && (
           <ConfirmModal
             selections={selections}
-            onNext={() => setModal("FORM")}
             onClose={cancelAndReset}
+            onNext={() => setModal("FORM")} // 👈 핵심
           />
         )}
 
         {modal === "FORM" && (
           <FormModal
-            selections={selections}
-            onSubmit={handleComplete}
-            onClose={cancelAndReset}
+            defaultValues={editingTarget} //  수정일 때만 값 있음
+            onSubmit={(data) => {
+              if (editingTarget) {
+                //  예약 수정(Change)
+                handleUpdate(editingTarget, data);
+              } else {
+                // 예약 확정(Create)
+                handleComplete(data);
+              }
+            }}
+            onClose={() => {
+              setEditingTarget(null); // 꼭 초기화
+              setModal(editingTarget ? "CONFIRM" : null);
+            }}
           />
         )}
 
         {modal === "CHECK" && (
-          <CheckModal
-            onClose={() => setModal(null)}
-            selections={selections}      // ✅ 변경
-          />
+          <CheckModal onClose={() => setModal(null)} onDelete={handleDelete} />
         )}
 
         {modal === "DONE" && (

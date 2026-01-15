@@ -17,7 +17,12 @@
   margin: 14px 0 6px;
   display: block;
   margin-left: 16px;
-
+}
+.form-label2 {
+  font-size: 16px;
+  margin: 14px 0 6px;
+  display: block;
+  margin-left: 48px;
 }
 
 /* 비번 문구 중앙 정렬 할 거면 다시 주석 해제하고 ㄱ */
@@ -29,7 +34,7 @@
 
 .form-input {
   width: 100%;
-  max-width: 160px;
+  max-width: 260px;
   margin: 0 auto;
   /* 중앙 정렬 */
   padding: 10px 12px;
@@ -51,7 +56,6 @@
   justify-content: space-between;
   gap: 16px;
   margin-top: 16px;
-
 }
 
 .row-item {
@@ -147,16 +151,12 @@
 }
 
 .pin-input {
-  width: 42px;
-  height: 42px;
+  width: 32px;
+  height: 32px;
   text-align: center;
   border-radius: 10px;
   border: 1px solid #d1d5db;
   font-size: 16px;
-  width: 32px;
-
-
-
 }
 
 .pin-input.yellow {
@@ -168,7 +168,6 @@
   background-repeat: no-repeat !important;
   background-size: 60% 1px !important;
   background-position: 50% 90% !important;
-
 }
 
 .hint {
@@ -203,8 +202,6 @@
   display: block;
   /* button 기본 inline 성질 방지 */
 }
-
-
 
 .modal .class-group {
   display: grid;

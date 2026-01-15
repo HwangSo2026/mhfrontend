@@ -11,10 +11,14 @@
   width: 100%;
   height: 55px;
   background-color: #212121;
-  position: relative;
+  position: sticky;
   display: flex;
   align-items: center;
   justify-items: center;
+  z-index: 1000;
+  top: 0;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .header-inner {
@@ -37,7 +41,6 @@
   top: 50%;
   transform: translate(-50%, -50%);
   height: 40px;
-
 }
 
 /* 오른쪽 예약 내역 버튼 */
@@ -51,10 +54,10 @@
   color: #d1d5db;
   font-size: 14px;
   cursor: pointer;
-  margin-right: 8px;     /* ✅ 여기서 미세 조절 */
+  margin-right: 8px; /* ✅ 여기서 미세 조절 */
 }
 
-.admin-btn{
+.admin-btn {
   margin-left: 8px;
 }
 
@@ -68,7 +71,7 @@
   font-size: 18px;
   line-height: 1.5;
   font-family: "GmarketMedium";
-  color: #2D2E35;
+  color: #2d2e35;
   margin-bottom: 16px;
   font-weight: 700;
 }
@@ -89,7 +92,7 @@
   margin: 0 auto;
 }
 
-.notice-box-span2{
+.notice-box-span2 {
   color: #7c818d;
 }
 
@@ -121,11 +124,10 @@
   cursor: pointer;
 }
 
-
-.admin-btn{
+.admin-btn {
   border-radius: 8px;
   border: 1px solid #facc15;
-  color: #fff; 
+  color: #fff;
   font-style: 5px;
   font-weight: 600;
 }
