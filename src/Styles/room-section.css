@@ -3,15 +3,15 @@
   margin-top: 32px;
 }
 
-.room-span{
+.room-span {
   font-size: 18px;
   font-weight: 600;
 }
 
-.room-div-span{
+.room-div-span {
   display: flex;
   justify-content: center;
-  height: 48px;
+  height: 64px;
   font-size: 15px;
   background-color: #fffbea;
   border-radius: 10px;
@@ -23,7 +23,13 @@
 .room-desc {
   display: flex;
   align-items: center;
-  color: #ff9c07; 
+  color: #ff9c07;
+}
+
+.room-pick-highlight {
+  font-weight: 700;
+  margin-right: 3px;
+  font-size: 18px;
 }
 
 .room-list {
@@ -61,4 +67,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.room-card {
+  transition: transform 120ms ease, box-shadow 120ms ease,
+    border-color 120ms ease;
+}
+
+.room-card:active {
+  transform: scale(0.98); /* 눌림감 */
+}
+
+.room-card.selected {
+  transform: scale(1.02); /* 선택됐을 때 살짝 커짐 */
+  border: 2px solid #facc15; /* 포인트 컬러 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }

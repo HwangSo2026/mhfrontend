@@ -2,11 +2,12 @@ import { useRef, useState } from "react";
 import Modal from "./Modal";
 import "../styles/form-modal.css";
 
-const FormModal = ({ onSubmit, onClose }) => {
-  const [name, setName] = useState("");
-  const [count, setCount] = useState(4);
-  const [classType, setClassType] = useState(null);
-  const [pin, setPin] = useState(["", "", "", ""]);
+const FormModal = ({ defaultValues, onSubmit, onClose }) => {
+  const [name, setName] = useState(defaultValues?.name ?? "");
+  const [count, setCount] = useState(defaultValues?.headcount ?? 4);
+  const [classType, setClassType] = useState(defaultValues?.course ?? null);
+  const [pin, setPin] = useState(["", "", "", ""]); // 수정 시에도 비번 재입력
+
   const pinRefs = useRef([]);
 
   const classes = ["임베디드", "클라우드", "웹/앱", "스마트팩토리", "IT/보안"];
@@ -46,7 +47,9 @@ const FormModal = ({ onSubmit, onClose }) => {
 
   const handlePinPaste = (e) => {
     e.preventDefault();
-    const text = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 4);
+    const text = (e.clipboardData.getData("text") || "")
+      .replace(/\D/g, "")
+      .slice(0, 4);
     if (!text) return;
 
     const next = ["", "", "", ""];
@@ -74,21 +77,19 @@ const FormModal = ({ onSubmit, onClose }) => {
         onChange={(e) => setName(e.target.value)}
       />
 
-      {/* 인원 수 */}
-      {/* <div className="form-row center">
-        <span className="row-label">인원 수</span>
-        <div className="counter">
-          <button onClick={() => setCount(Math.max(1, count - 1))}>−</button>
-          <span>{count}명</span>
-          <button onClick={() => setCount(count + 1)}>＋</button>
-        </div>
-      </div> */}
       <div className="people-group">
         <span className="row-label">인원 수</span>
         <div className="counter">
-          <button type="button" onClick={() => setCount(Math.max(1, count - 1))}>−</button>
+          <button
+            type="button"
+            onClick={() => setCount(Math.max(1, count - 1))}
+          >
+            −
+          </button>
           <span>{count}명</span>
-          <button type="button" onClick={() => setCount(count + 1)}>＋</button>
+          <button type="button" onClick={() => setCount(count + 1)}>
+            ＋
+          </button>
         </div>
       </div>
 
@@ -121,14 +122,11 @@ const FormModal = ({ onSubmit, onClose }) => {
             onChange={(e) => handlePinChange(i, e.target.value)}
             onKeyDown={(e) => handlePinKeyDown(i, e)}
             maxLength={1}
-
             // ✅ 모바일 숫자 키패드
             inputMode="numeric"
             pattern="[0-9]*"
-
             // ✅ 실제 값은 저장하지만 화면은 마스킹(*)
             type="password"
-
             // ✅ iOS 자동완성/자동수정 방지(가끔 이상해짐)
             autoComplete="one-time-code"
             autoCorrect="off"
@@ -142,7 +140,18 @@ const FormModal = ({ onSubmit, onClose }) => {
       <div className="form-divider" />
 
       {/* 제출 */}
-      <button type="button" className="form-submit" onClick={onSubmit}>
+      <button
+        type="button"
+        className="form-submit"
+        onClick={() => {
+          onSubmit({
+            name,
+            course: classType,
+            headcount: count,
+            password: pin.join(""), //  "1234"
+          });
+        }}
+      >
         예약 완료
       </button>
     </Modal>

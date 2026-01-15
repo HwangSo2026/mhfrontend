@@ -4,7 +4,7 @@ const RoomSection = ({
   rooms,
   selectedRoom,
   onSelect,
-  heldMap = {},     // { "1": true, "2": false ... }
+  heldMap = {}, // { "1": true, "2": false ... }
   loading = false,
 }) => {
   return (
@@ -20,14 +20,16 @@ const RoomSection = ({
         return (
           <button
             key={label}
-            className={`room-card ${selected ? "selected" : ""} ${disabled ? "disabled" : ""}`}
+            className={`room-card ${selected ? "selected" : ""} ${
+              disabled ? "disabled" : ""
+            }`}
             onClick={() => !disabled && onSelect(label)}
             disabled={disabled}
             type="button"
           >
             <span>{label}</span>
 
-            {held && !selected && <span className="room-badge">예약중</span>}
+            {held && !selected && <span className="room-badge">예약 중</span>}
             {selected && <span className="room-check">✓</span>}
           </button>
         );
