@@ -82,7 +82,7 @@ const FormModal = ({ defaultValues, onSubmit, onClose }) => {
         <div className="counter">
           <button
             type="button"
-            onClick={() => setCount(Math.max(1, count - 1))}
+            onClick={() => setCount(Math.max(2, count - 1))}
           >
             −
           </button>
