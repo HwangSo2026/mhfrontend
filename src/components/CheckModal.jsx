@@ -14,11 +14,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
-import ReservationDetailModal from "./ReservationDetailModal"; // ✅ 추가
+import ReservationListModal from "./ReservationListModal";
 import "../styles/check-modal.css";
-import { searchReservation } from "../api/reservationApi";
 
-const CheckModal = ({ onClose, onDelete }) => {
+import { searchReservation, adminLogin } from "../api/reservationApi"; // 관리자용
+
+const CheckModal = ({ onClose, onDelete, onAdmin }) => {
+  /* ======================================================
+   *  CheckModal -> List Modal 쓰기
+   * ====================================================== */
+  const [picked, setPicked] = useState(null);
+
   /* ======================================================
    * 1. SEARCH 단계 상태 (예약자 이름 / 비밀번호 입력)
    * ====================================================== */
@@ -67,8 +73,9 @@ const CheckModal = ({ onClose, onDelete }) => {
     setStep("SEARCH");
     setSelectedReservations([]);
     setErrorMessage(""); // [추가]
+    setPicked(null); // picked 고른 방도 초기화
 
-    setTimeout(() => inputsRef.current?.[0]?.focus(), 0);
+    // setTimeout(() => inputsRef.current?.[0]?.focus(), 0);
   }, []);
 
   /* ======================================================
@@ -84,7 +91,7 @@ const CheckModal = ({ onClose, onDelete }) => {
       next[idx] = "";
       setPin(next);
       setActiveIndex(Math.max(idx - 1, 0));
-      inputsRef.current[Math.max(idx - 1, 0)]?.focus();
+      // inputsRef.current[Math.max(idx - 1, 0)]?.focus();
       return;
     }
 
@@ -121,6 +128,23 @@ const CheckModal = ({ onClose, onDelete }) => {
   const handleSubmit = async () => {
     if (!canSubmit) return;
 
+    const trimmedName = name.trim();
+    const pass = pin.join("");
+
+    // ✅ 1) 관리자 로그인 먼저 시도 + 로그
+    try {
+      const result = await adminLogin({ name: trimmedName, password: pass });
+
+      if (result?.role?.toLowerCase() === "admin") {
+        onClose?.();
+        onAdmin?.(result.token); // ✅ 토큰 넘기기 (권장)
+        return; // ✅ 여기서 끝
+      }
+    } catch (e) {
+      // 실패하면 그냥 사용자 조회로 넘어감
+    }
+
+    // ✅ 2) 여기부터 기존 "사용자 예약 조회"
     try {
       const date = new Intl.DateTimeFormat("sv-SE", {
         timeZone: "Asia/Seoul",
@@ -136,22 +160,21 @@ const CheckModal = ({ onClose, onDelete }) => {
           searchReservation({
             date,
             slot,
-            name,
-            password: pin.join(""),
+            name: trimmedName,
+            password: pass,
           })
         )
       );
 
       const matched = all
         .flat()
-        .filter((r) => r.reservation?.name === name.trim());
+        .filter((r) => r.reservation?.name === trimmedName);
 
-      // 조회 결과 없음 → ERROR 단계로 이동
       if (matched.length === 0) {
         setErrorMessage(
           "예약 내역을 찾을 수 없어요.\n이름 또는 비밀번호를 다시 확인해 주세요."
-        ); // [추가]
-        setStep("ERROR"); // [추가]
+        );
+        setStep("ERROR");
         return;
       }
 
@@ -164,26 +187,59 @@ const CheckModal = ({ onClose, onDelete }) => {
         name: r.reservation.name,
         course: r.reservation.course,
         headcount: r.reservation.headcount,
-        password: pin.join(""),
+        password: pass,
       }));
 
       setSelectedReservations(mapped);
-      setStep("DETAIL");
+      setStep("LIST");
     } catch (e) {
       console.error(e);
-
-      // 예상치 못한 에러도 ERROR 단계로 통합
       setErrorMessage(
         "예약 내역을 조회할 수 없어요.\n입력한 정보를 다시 확인해 주세요."
-      ); // [추가]
-      setStep("ERROR"); // [추가]
+      );
+      setStep("ERROR");
     }
   };
 
   /* ======================================================
-   * 10. DETAIL 기준 데이터
+   * 10. DETAIL 기준 데이터 : 전체 -> 1개만 고르고 변경
    * ====================================================== */
-  const base = selectedReservations[0];
+  const base = picked ?? null;
+
+  useEffect(() => {
+    if (step === "DETAIL" && !picked) setStep("LIST");
+  }, [step, picked]);
+
+  /* ======================================================
+   * LIST 단계면 CheckModal의 Modal을 쓰지 않고,
+   * ReservationListModal이 가진 Modal을 그대로 사용
+   * ====================================================== */
+  if (step === "LIST") {
+    const listItems = selectedReservations.map((r) => ({
+      id: `${r.date}-${r.slot}-${r.roomKey}`, // 유니크 키
+      room: r.room, // "회의실 3"
+      time: r.time, // "09:00-11:00"
+      date: r.date, // "2026-01-17"
+      classType: r.course, // "클라우드" 등
+      count: r.headcount, // 인원수
+      // 필요하면 원본도 같이
+      _raw: r,
+    }));
+
+    return (
+      <ReservationListModal
+        reservations={listItems}
+        onClose={() => {
+          setPicked(null); // "나가기" 누르면 다시 조회 화면으로 (골랐던거 null Set)
+          setStep("SEARCH");
+        }}
+        onPick={(item) => {
+          setPicked(item._raw); // 원본 예약 저장
+          setStep("DETAIL"); // 여기서 디테일 화면으로 가도 되고
+        }}
+      />
+    );
+  }
 
   return (
     <Modal onClose={onClose}>
@@ -237,20 +293,47 @@ const CheckModal = ({ onClose, onDelete }) => {
             <h2 className="check-title">예약 내역 조회</h2>
           </div>
 
-          {selectedReservations.map((r, idx) => (
-            <div key={idx} className="check-summary">
-              {r.time} · {r.room}
+          {/* 상단 예약 정보 (메타 칩) */}
+          {(base?.date || base?.time || base?.room) && (
+            <div className="meta-chips">
+              {base?.date && (
+                <div className="meta-chip2">
+                  <span className="meta-ico">📅</span>
+                  <span className="meta-txt">{base.date}</span>
+                </div>
+              )}
+
+              <div className="meta-chips-div">
+                {base?.time && (
+                  <div className="meta-chip">
+                    <span className="meta-ico">⏰</span>
+                    <span className="meta-txt">{base.time}</span>
+                  </div>
+                )}
+                {base?.room && (
+                  <div className="meta-chip">
+                    <span className="meta-ico">🏢</span>
+                    <span className="meta-txt">{base.room}</span>
+                  </div>
+                )}
+              </div>
             </div>
-          ))}
+          )}
 
           <label className="check-label">예약자</label>
-          <input className="check-input" value={base.name} disabled />
+          <div className="check-input-div">
+            <input className="check-input" value={base.name} disabled />
+          </div>
 
           <label className="check-label">해당 반</label>
-          <div className="readonly">{base.course}</div>
+          <div className="check-input-div">
+            <div className="readonly">{base.course}</div>
+          </div>
 
           <label className="check-label">인원 수</label>
-          <div className="readonly">{base.headcount}명</div>
+          <div className="check-input-div">
+            <div className="readonly">{base.headcount}명</div>
+          </div>
 
           <p className="check-notice">
             변경을 원하실 경우 예약을 취소한 뒤 다시 예약해주세요.
@@ -288,13 +371,26 @@ const CheckModal = ({ onClose, onDelete }) => {
               className="check-action red"
               onClick={async () => {
                 try {
-                  await Promise.all(
-                    selectedReservations.map((r) => onDelete(r))
+                  await onDelete(base);
+
+                  // ✅ next를 직접 만들어서 길이로 분기
+                  const next = selectedReservations.filter(
+                    (r) =>
+                      !(
+                        r.date === base.date &&
+                        r.slot === base.slot &&
+                        r.roomKey === base.roomKey
+                      )
                   );
-                  setStep("DONE");
-                } catch {
-                  setErrorMessage("예약 취소에 실패했어요."); // [추가]
-                  setStep("ERROR"); // [추가]
+
+                  setSelectedReservations(next);
+                  setPicked(null);
+
+                  setStep(next.length > 0 ? "LIST" : "DONE");
+                } catch (e) {
+                  console.error(e);
+                  setErrorMessage("예약 취소에 실패했어요.");
+                  setStep("ERROR");
                 }
               }}
             >

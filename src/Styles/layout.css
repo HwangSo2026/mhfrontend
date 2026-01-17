@@ -80,9 +80,8 @@
 /* 공지 박스 */
 .notice-box {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   gap: 16px;
-  align-items: center;
   padding: 10px 14px;
   border: 2px solid #facc15;
   border-radius: 12px;
@@ -91,6 +90,19 @@
   color: #374151;
   max-width: 360px;
   margin: 0 auto;
+  text-align: left;
+  font-size: 15px;
+}
+
+.notice-box-div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+  font-size: 12px;
+}
+.notice-span {
+  margin-bottom: 2px;
 }
 
 .notice-box-span2 {
