@@ -87,6 +87,10 @@ const Home = () => {
   const [step, setStep] = useState("TIME"); // TIME | ROOM
   const [modal, setModal] = useState(null); // null | CONFIRM | FORM | CHECK | ADMIN
 
+  // 관리자용 토큰 (AdminModal 전달용도)
+  const [openAdmin, setOpenAdmin] = useState(false);
+  const [adminToken, setAdminToken] = useState(null);
+
   // null이면 "예약 확정"
   // 값이 있으면 "예약 수정"
   const [editingTarget, setEditingTarget] = useState(null);
@@ -107,6 +111,11 @@ const Home = () => {
   const [roomStatusLoading, setRoomStatusLoading] = useState(false);
 
   const SELECT_FEEDBACK_MS = 350;
+
+  const handleAdminForceCancel = async (payload) => {
+    // TODO: adminForceDelete API 연결
+    setOpenAdmin(false);
+  };
 
   useEffect(() => {
     const shouldRefresh = modal === "CONFIRM" || modal === "FORM";
@@ -457,21 +466,6 @@ const Home = () => {
           <button className="history-btn" onClick={() => setModal("CHECK")}>
             예약 내역
           </button>
-
-          {/* 임시 관리자 버튼 */}
-          <button className="admin-btn" onClick={() => setModal("ADMIN")}>
-            (임시) 관리자
-          </button>
-          {modal === "ADMIN" && (
-            <AdminModal
-              open={true}
-              onClose={() => setModal(null)}
-              onForceCancel={(payload) => {
-                console.log("강제취소", payload);
-                setModal(null);
-              }}
-            />
-          )}
         </div>
       </header>
 
@@ -485,11 +479,19 @@ const Home = () => {
           </p>
 
           <div className="notice-box">
-            <span>· 최대 2타임 ·</span>
-            <span className="notice-box-span2">
-              10시 전 프로젝트 진행 과정 우선
-            </span>
-            <span className="notice-icon">ⓘ</span>
+            <div>
+              <span className="notice-icon">ⓘ</span>
+              <span style={{ marginLeft: "8px" }}>회의실 이용 안내</span>
+            </div>
+
+            <div className="notice-box-div">
+              <span className="notice-span">· 프로젝트 진행 과정 ~10:00까지 예약 우선 작성</span>
+              <span className="notice-span">· 최대 2타임 까지만 예약 가능</span>
+              <span className="notice-span">· 오전 10시 이후부터는 모든 과정 예약 가능</span>
+              <span className="notice-span">· 회의실 예약은 당일 작성만 가능</span>
+              <span className="notice-span">· 회의실 사용 후 정리정돈 및 예약 내용 지우기</span>
+              <span className="notice-span">· 예약 취소는 우측 상단 '에약 내역' 에서 가능</span>
+            </div>
           </div>
         </section>
 
@@ -567,7 +569,15 @@ const Home = () => {
         )}
 
         {modal === "CHECK" && (
-          <CheckModal onClose={() => setModal(null)} onDelete={handleDelete} />
+          <CheckModal
+            onClose={() => setModal(null)}
+            onDelete={handleDelete}
+            onAdmin={(token) => {
+              setModal(null); // (선택) 체크 모달 닫고
+              setAdminToken(token); // 토큰 저장
+              setOpenAdmin(true); // 관리자 모달 열기
+            }}
+          />
         )}
 
         {modal === "DONE" && (
@@ -583,6 +593,13 @@ const Home = () => {
             </div>
           </Modal>
         )}
+
+        <AdminModal
+          open={openAdmin}
+          token={adminToken}
+          onClose={() => setOpenAdmin(false)}
+          onForceCancel={handleAdminForceCancel}
+        />
       </div>
     </>
   );

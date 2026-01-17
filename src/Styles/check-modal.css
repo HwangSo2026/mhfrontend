@@ -31,13 +31,23 @@
 }
 
 /* ===== 예약자 입력 ===== */
+
+.check-input-div{
+  width: 100%;
+  display: flex;
+  /* justify-content: center; */
+}
+
 .check-input {
   width: 100%;
-  max-width: 160px;
-  padding: 10px 12px;
+  height: 32px;
+  padding: 0px 12px;
   border-radius: 12px;
   border: 2px solid #facc15;
   background: #fffbea;
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 500;
 }
 
 /* ===== PIN ===== */
@@ -101,6 +111,7 @@
   font-family: "GmarketMedium";
   cursor: pointer;
   display: block;
+  margin-top: 16px;
 }
 
 /* 결과 버튼 */
@@ -183,15 +194,19 @@
 
 /* 상세에서 읽기 전용 박스 */
 .readonly {
+  display: flex;
+  align-items: center;
   width: 100%;
-  max-width: 220px;
-  margin: 0 0 8px 0;
-  padding: 10px 12px;
+  height: 32px;
+  max-width: 100vw;
+  padding: 0px 12px;
   border-radius: 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  text-align: center;
-  font-family: "GmarketMedium";
+  border: 2px solid #facc15;
+  background: #fffbea;
+
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 500;
 }
 
 
