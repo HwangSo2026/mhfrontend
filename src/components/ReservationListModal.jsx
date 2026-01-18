@@ -35,9 +35,6 @@ const ReservationListModal = ({ reservations = [], onClose, onPick }) => {
       )}
 
       <div style={{ marginTop: 12 }} />
-      <button type="button" className="form-submit secondary" onClick={onClose}>
-        나가기
-      </button>
     </Modal>
   );
 };

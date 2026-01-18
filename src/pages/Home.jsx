@@ -72,6 +72,10 @@ const sortSelectionsByTime = (arr) =>
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// ResevationDe
+const [historyReservations, setHistoryReservations] = useState([]);
+const [detailReservation, setDetailReservation] = useState(null);
+
 function timeToSlot(time) {
   return TIME_TO_SLOT[time]; // undefined면 백엔드 slot이랑 불일치
 }
@@ -490,7 +494,7 @@ const Home = () => {
               <span className="notice-span">· 오전 10시 이후부터는 모든 과정 예약 가능</span>
               <span className="notice-span">· 회의실 예약은 당일 작성만 가능</span>
               <span className="notice-span">· 회의실 사용 후 정리정돈 및 예약 내용 지우기</span>
-              <span className="notice-span">· 예약 취소는 우측 상단 '에약 내역' 에서 가능</span>
+              <span className="notice-span">· 예약 취소는 우측 상단 '예약 내역' 에서 가능</span>
             </div>
           </div>
         </section>

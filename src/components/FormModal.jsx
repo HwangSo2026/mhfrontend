@@ -118,19 +118,24 @@ const FormModal = ({ defaultValues, onSubmit, onClose }) => {
             key={i}
             ref={(el) => (pinRefs.current[i] = el)}
             className="pin-input yellow"
-            value={v}
-            onChange={(e) => handlePinChange(i, e.target.value)}
-            onKeyDown={(e) => handlePinKeyDown(i, e)}
-            maxLength={1}
-            // ✅ 모바일 숫자 키패드
+            // ✅ 화면엔 *로 보이게
+            value={v ? "*" : ""}
+            // ✅ 모바일 숫자 키패드 유도
+            type="tel"
             inputMode="numeric"
             pattern="[0-9]*"
-            // ✅ 실제 값은 저장하지만 화면은 마스킹(*)
-            type="password"
-            // ✅ iOS 자동완성/자동수정 방지(가끔 이상해짐)
-            autoComplete="one-time-code"
+            maxLength={1}
+            // ✅ 자동완성은 보통 첫 칸만
+            autoComplete={i === 0 ? "one-time-code" : "off"}
             autoCorrect="off"
             autoCapitalize="off"
+            onChange={(e) => {
+              const digit = (e.target.value || "")
+                .replace(/\D/g, "")
+                .slice(0, 1);
+              handlePinChange(i, digit);
+            }}
+            onKeyDown={(e) => handlePinKeyDown(i, e)}
           />
         ))}
       </div>

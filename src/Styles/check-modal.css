@@ -32,7 +32,7 @@
 
 /* ===== 예약자 입력 ===== */
 
-.check-input-div{
+.check-input-div {
   width: 100%;
   display: flex;
   /* justify-content: center; */
@@ -166,6 +166,16 @@
   background: #facc15;
 }
 
+.checkModal-btn-div{
+  display: flex;
+  gap: 5px;
+}
+
+.check-action.gray {
+  background: #929292;
+  color: #fff;
+}
+
 .check-action.red {
   background: #ef4444;
   color: #fff;
@@ -209,7 +219,6 @@
   font-weight: 500;
 }
 
-
 .check-yellow2 {
   width: 200px;
   padding: 10px 12px;
@@ -219,4 +228,17 @@
   margin-left: 45px;
   border: 2px solid #facc15;
   background: #fffbea;
+}
+
+.back-btn {
+  background: transparent;
+  border: 0;
+  font-size: 20px;
+  cursor: pointer;
+  
+}
+.check-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

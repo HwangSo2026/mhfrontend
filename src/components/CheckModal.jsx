@@ -25,6 +25,26 @@ const CheckModal = ({ onClose, onDelete, onAdmin }) => {
    * ====================================================== */
   const [picked, setPicked] = useState(null);
 
+  const goBack = () => {
+    if (step === "DETAIL") {
+      setPicked(null);
+      setStep("LIST");
+      return;
+    }
+    if (step === "CONFIRM") {
+      setStep("DETAIL");
+      return;
+    }
+    if (step === "ERROR") {
+      setStep("SEARCH");
+      return;
+    }
+    if (step === "DONE") {
+      onClose?.(); // 또는 setStep("SEARCH")
+      return;
+    }
+  };
+
   /* ======================================================
    * 1. SEARCH 단계 상태 (예약자 이름 / 비밀번호 입력)
    * ====================================================== */
@@ -162,8 +182,8 @@ const CheckModal = ({ onClose, onDelete, onAdmin }) => {
             slot,
             name: trimmedName,
             password: pass,
-          })
-        )
+          }),
+        ),
       );
 
       const matched = all
@@ -172,7 +192,7 @@ const CheckModal = ({ onClose, onDelete, onAdmin }) => {
 
       if (matched.length === 0) {
         setErrorMessage(
-          "예약 내역을 찾을 수 없어요.\n이름 또는 비밀번호를 다시 확인해 주세요."
+          "예약 내역을 찾을 수 없어요.\n이름 또는 비밀번호를 다시 확인해 주세요.",
         );
         setStep("ERROR");
         return;
@@ -195,7 +215,7 @@ const CheckModal = ({ onClose, onDelete, onAdmin }) => {
     } catch (e) {
       console.error(e);
       setErrorMessage(
-        "예약 내역을 조회할 수 없어요.\n입력한 정보를 다시 확인해 주세요."
+        "예약 내역을 조회할 수 없어요.\n입력한 정보를 다시 확인해 주세요.",
       );
       setStep("ERROR");
     }
@@ -269,6 +289,13 @@ const CheckModal = ({ onClose, onDelete, onAdmin }) => {
                 ref={(el) => (inputsRef.current[i] = el)}
                 className="pin-input yellow"
                 value={activeIndex === i ? d : d ? "*" : ""}
+                // ✅ 모바일 숫자패드 유도
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={1}
+                autoComplete={i === 0 ? "one-time-code" : "off"}
+                enterKeyHint={i === pin.length - 1 ? "done" : "next"}
                 onChange={(e) => handlePinChange(i, e.target.value)}
                 onKeyDown={(e) => handlePinKeyDown(i, e)}
                 onFocus={() => setActiveIndex(i)}
@@ -289,7 +316,7 @@ const CheckModal = ({ onClose, onDelete, onAdmin }) => {
       {/* ================= DETAIL ================= */}
       {step === "DETAIL" && base && (
         <>
-          <div className="check-header">
+          <div className="form-header">
             <h2 className="check-title">예약 내역 조회</h2>
           </div>
 
@@ -339,12 +366,18 @@ const CheckModal = ({ onClose, onDelete, onAdmin }) => {
             변경을 원하실 경우 예약을 취소한 뒤 다시 예약해주세요.
           </p>
 
-          <button
-            className="check-action red"
-            onClick={() => setStep("CONFIRM")}
-          >
-            예약 취소
-          </button>
+          <div className="checkModal-btn-div">
+            <button type="button" className="check-action gray" onClick={goBack}>
+              뒤로 가기
+            </button>
+
+            <button
+              className="check-action red"
+              onClick={() => setStep("CONFIRM")}
+            >
+              예약 취소
+            </button>
+          </div>
         </>
       )}
 
@@ -380,7 +413,7 @@ const CheckModal = ({ onClose, onDelete, onAdmin }) => {
                         r.date === base.date &&
                         r.slot === base.slot &&
                         r.roomKey === base.roomKey
-                      )
+                      ),
                   );
 
                   setSelectedReservations(next);
