@@ -72,10 +72,6 @@ const sortSelectionsByTime = (arr) =>
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// ResevationDe
-const [historyReservations, setHistoryReservations] = useState([]);
-const [detailReservation, setDetailReservation] = useState(null);
-
 function timeToSlot(time) {
   return TIME_TO_SLOT[time]; // undefined면 백엔드 slot이랑 불일치
 }
@@ -88,6 +84,7 @@ function roomToKey(roomLabel) {
 }
 
 const Home = () => {
+
   const [step, setStep] = useState("TIME"); // TIME | ROOM
   const [modal, setModal] = useState(null); // null | CONFIRM | FORM | CHECK | ADMIN
 
