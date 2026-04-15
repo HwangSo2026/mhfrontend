@@ -458,11 +458,9 @@ const Home = () => {
       {/* 헤더 */}
       <header className="header">
         <div className="header-inner">
-          <img
-            src="/rapa-logo.png"
-            alt="DX 캠퍼스 로고"
-            className="header-logo"
-          />
+          <span className="header-logo">
+            MeetHub ⏰
+          </span>
 
           <button className="history-btn" onClick={() => setModal("CHECK")}>
             예약 내역
@@ -474,8 +472,6 @@ const Home = () => {
         {/* 상단 안내 */}
         <section className="intro-section">
           <p className="intro-title">
-            현대 오토에버 모빌리티 SW 스쿨
-            <br />
             회의실 예약 관리 시스템
           </p>
 

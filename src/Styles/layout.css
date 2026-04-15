@@ -42,6 +42,8 @@
   top: 50%;
   transform: translate(-50%, -50%);
   height: 40px;
+  color:#e5b908;
+  align-content: center;
 }
 
 /* 오른쪽 예약 내역 버튼 */
